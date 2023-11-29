@@ -30,6 +30,7 @@ urlpatterns_jwt = [
 
 
 router = DefaultRouter()
+router.register('api/user', views.UserViewSets, basename='user-api')
 router.register('api/products', views.ProductViewSets, basename='product-api')
 
 urlpatterns = router.urls
