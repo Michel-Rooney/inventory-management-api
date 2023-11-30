@@ -37,10 +37,10 @@ class LogProduct(models.Model):
 
 
 class Purchase(models.Model):
-    company = models.OneToOneField(
+    company = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True
     )
     total_price = models.FloatField(default=0)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    products = models.ManyToManyField(LogProduct)
+    log_products = models.ManyToManyField(LogProduct, blank=True)

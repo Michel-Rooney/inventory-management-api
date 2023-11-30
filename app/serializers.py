@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from . import models
-from collections import defaultdict
-from rest_framework.validators import ValidationError
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,16 +12,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.messages = defaultdict(list)
-
     class Meta:
         model = models.Product
         fields = '__all__'
 
-    def validade(self, attrs):
-        if self.messages:
-            raise ValidationError(self.messages)
 
-        return super().validate(attrs)
+class PurchaseSerializer(serializers.ModelSerializer):
+    products = serializers.ListField(required=True)
+
+    class Meta:
+        model = models.Purchase
+        fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data.pop('products')
+        return super().create(validated_data)
+
+
+class LogProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LogProduct
+        fields = '__all__'
