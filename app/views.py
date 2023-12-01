@@ -8,6 +8,7 @@ from rest_framework import filters
 
 from . import models, serializers
 from .permissions import IsOwner, IsOwnerProduct
+from .utils.purchase import analyze_product_save
 
 
 class UserViewSets(ModelViewSet):
@@ -44,23 +45,13 @@ class PurchaseViewSets(ModelViewSet):
     queryset = models.Purchase.objects.all()
     serializer_class = serializers.PurchaseSerializer
     permission_classes = [IsAuthenticated, IsOwnerProduct]
+    http_method_names = ['get', 'post', 'PUT', 'PATCH', 'DELETE']
 
     def perform_create(self, serializer):
-        purchase_instance = serializer.save()
+        purchase_instance = serializer.save(company=self.request.user)
 
         products = self.request.data['products']
-        for product in products:
-            log_product = models.LogProduct.objects.create(
-                name=product.get('name'),
-                description=product.get(
-                    'description', 'Esse produto não possui uma descrição'
-                ),
-                brand=product.get('brand', 'Sem marca'),
-                quantity=product.get('quantity', 1),
-                price=product.get('price', 1),
-            )
-
-            purchase_instance.log_products.add(log_product)
+        analyze_product_save(purchase_instance, products)
 
         return super().perform_create(serializer)
 
