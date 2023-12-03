@@ -28,3 +28,8 @@ LOG_BUY {
 LOG_PRODUCTS {
     PK
 }
+
+
+[X] TODO: Validar se tem produto no estoque para fazer a compra
+[X] TODO: Criar url de produtos que estão perto de acabar
+[X] TODO: Validar se os produtos que vem tem quantidade positiva

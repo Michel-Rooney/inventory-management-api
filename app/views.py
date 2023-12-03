@@ -5,10 +5,15 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
+from rest_framework.decorators import action
 
-from . import models, serializers
+from .utils import querys
+
+from . import serializers
 from .permissions import IsOwner, IsOwnerProduct
-from .utils.purchase import analyze_product_save
+from .utils.purchase import validators, validators_request_data
+from .utils.product.product import get_products_alert
+from .pagination import ProductPagination
 
 
 class UserViewSets(ModelViewSet):
@@ -26,11 +31,12 @@ class UserViewSets(ModelViewSet):
 
 
 class ProductViewSets(ModelViewSet):
-    queryset = models.Product.objects.all()
+    queryset = querys.get_products()
     serializer_class = serializers.ProductSerializer
     permission_classes = [IsAuthenticated, IsOwnerProduct]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'description', 'brand']
+    pagination_class = ProductPagination
 
     def perform_create(self, serializer):
         serializer.save(company=self.request.user)
@@ -40,22 +46,30 @@ class ProductViewSets(ModelViewSet):
         self.queryset = self.queryset.filter(company=request.user.id)
         return super().list(request, *args, **kwargs)
 
+    @action(['get'], False)
+    def alert_products(self, request, *args, **kwargs):
+        result_products = get_products_alert(request)
+        return Response(result_products)
+
 
 class PurchaseViewSets(ModelViewSet):
-    queryset = models.Purchase.objects.all()
+    queryset = querys.get_purchases()
     serializer_class = serializers.PurchaseSerializer
     permission_classes = [IsAuthenticated, IsOwnerProduct]
     http_method_names = ['get', 'post', 'PUT', 'PATCH', 'DELETE']
 
     def perform_create(self, serializer):
-        purchase_instance = serializer.save(company=self.request.user)
-
         products = self.request.data['products']
-        analyze_product_save(purchase_instance, products)
+
+        validators_request_data.analyze_request_data(products)
+        validators.analyze_product_model_existence(products)
+
+        company = self.request.user
+        validators.analyze_product_save(serializer, company, products)
 
         return super().perform_create(serializer)
 
 
 class LogProductViewSets(ModelViewSet):
-    queryset = models.LogProduct.objects.all()
+    queryset = querys.get_log_products()
     serializer_class = serializers.LogProductSerializer

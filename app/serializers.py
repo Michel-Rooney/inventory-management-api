@@ -14,7 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'description', 'brand',
+            'quantity', 'price'
+        ]
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
