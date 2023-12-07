@@ -11,30 +11,46 @@ class Product(models.Model):
     description = models.CharField(max_length=255)
     brand = models.CharField(max_length=64)
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
-    price = models.FloatField(validators=[MinValueValidator(0.00)])
+    purchase_price = models.FloatField(validators=[MinValueValidator(0.00)])
+    sale_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+    expiration = models.DateField()
 
     def __str__(self) -> str:
         return (
-            f'Log: {self.name} | {self.brand} | '
-            f'Qtd: {self.quantity} | R$ {self.price}'
+            f'{self.name} | {self.brand} | '
+            f'Qtd: {self.quantity} | R$ {self.sale_price}'
         )
 
 
-class LogProduct(models.Model):
+class ProductExpirationLog(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.IntegerField(validators=[MinValueValidator(0)])
+    expiration = models.DateField()
+
+    def __str__(self) -> str:
+        return (
+            f'{self.product.name} | Expiration: {self.expiration} |  '
+            f'Qtd: {self.quantity}'
+        )
+
+
+class ProductLog(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=255)
     brand = models.CharField(max_length=64)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
-    price = models.FloatField(validators=[MinValueValidator(0.00)])
+    purchase_price = models.FloatField(validators=[MinValueValidator(0.00)])
+    sale_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+    expiration = models.DateField()
 
     def __str__(self) -> str:
         return (
             f'Log: {self.name} | {self.brand} | '
-            f'Qtd: {self.quantity} | R$ {self.price}'
+            f'Qtd: {self.quantity} | R$ {self.sale_price}'
         )
 
 
@@ -45,7 +61,7 @@ class Purchase(models.Model):
     total_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    log_products = models.ManyToManyField(LogProduct, blank=True)
+    log_products = models.ManyToManyField(ProductLog, blank=True)
 
     def __str__(self) -> str:
         return f'Purchase {self.create_at}'

@@ -36,7 +36,7 @@ router.register(
     'api/purchase', views.PurchaseViewSets, basename='purchase-api'
 )
 router.register(
-    'api/log-product', views.LogProductViewSets, basename='log-product-api'
+    'api/product-log', views.ProductLogViewSets, basename='log-product-api'
 )
 
 urlpatterns = router.urls

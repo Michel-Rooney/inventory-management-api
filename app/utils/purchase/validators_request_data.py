@@ -43,14 +43,35 @@ def quantity_validator(product, errors_product):
     return errors_product
 
 
-def price_validator(product, errors_product):
-    if product.get('price', '') == '':
-        errors_product['price'] = ['O campo de preço é obrigatório']
+def purchase_price_validator(product, errors_product):
+    if product.get('purchase_price', '') == '':
+        errors_product['purchase_price'] = [
+            'O campo de preço de compra é obrigatório'
+        ]
+
+    return errors_product
+
+
+def sale_price_validator(product, errors_product):
+    if product.get('sale_price', '') == '':
+        errors_product['sale_price'] = [
+            'O campo de preço de venda é obrigatório'
+        ]
+
+    return errors_product
+
+
+def expiration_validator(product, errors_product):
+    if product.get('expiration', '') == '':
+        errors_product['expiration'] = [
+            'O campo de validade é obrigatório'
+        ]
 
     return errors_product
 
 
 def analyze_request_data(products):
+    print(products)
     errors = {}
 
     for i, product in enumerate(products, start=1):
@@ -63,7 +84,11 @@ def analyze_request_data(products):
         errors_product.update(description_validator(product, errors_product))
         errors_product.update(brand_validator(product, errors_product))
         errors_product.update(quantity_validator(product, errors_product))
-        errors_product.update(price_validator(product, errors_product))
+        errors_product.update(purchase_price_validator(
+            product, errors_product
+        ))
+        errors_product.update(sale_price_validator(product, errors_product))
+        errors_product.update(expiration_validator(product, errors_product))
 
         if errors_product:
             errors[f'{product_name}'] = errors_product

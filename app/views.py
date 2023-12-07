@@ -9,10 +9,11 @@ from rest_framework.decorators import action
 
 from .utils import querys
 
-from . import serializers
+from . import serializers, models
 from .permissions import IsOwner, IsOwnerProduct
 from .utils.purchase import validators, validators_request_data
 from .utils.product.product import get_products_alert
+from .utils.product.expiration import analyze_expiration
 from .pagination import ProductPagination
 
 
@@ -40,7 +41,118 @@ class ProductViewSets(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(company=self.request.user)
+
+        expiration_log = models.ProductExpirationLog.objects.create(
+            product=serializer.instance,
+            quantity=serializer.instance.quantity,
+            expiration=serializer.instance.expiration
+        )
+
+        expiration_log.save()
+
         return super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        # 1- Preciso pegar os dados da request
+        instance = serializer.instance
+        quantity = self.request.data.get('quantity', '')
+        expiration = self.request.data.get(
+            'expiration', str(instance.expiration)
+        )
+
+        if quantity == '':
+            return super().perform_update(serializer)
+
+        diff_quantity = quantity - instance.quantity
+        
+        # 2- Preciso pegar o antigo_model do ValidatyProduct apartir do id e da data
+        before_model = models.ProductExpirationLog.objects.filter(
+            product__id=instance.id,
+            expiration=instance.expiration
+        ).first()
+
+        # 3- Validar se o antigo_model realmente existe
+        #     1. Se existir, passa a diante
+        #     2. Se não existir, criar novo model apartir da diferença
+        if not before_model:
+            models.ProductExpirationLog.objects.create(
+                product=instance,
+                quantity=diff_quantity,
+                expiration=instance.expiration
+            )
+            return super().perform_update(serializer)
+        
+        print(diff_quantity)
+        
+
+        # 4- Preciso validar se datas são iguais/diferentes
+        #     1. Se iguais, preciso analisar se a diferença é positiva ou negativa
+        if expiration != str(before_model.expiration):
+        #     1. Se a diferença é positiva, criar novo model
+            if diff_quantity > 0:
+                actual_model = models.ProductExpirationLog.objects.filter(
+                    product__id=instance.id,
+                    expiration=expiration
+                ).first()
+
+                models.ProductExpirationLog.objects.create(
+                    product=instance,
+                    quantity=diff_quantity,
+                    expiration=expiration
+                )
+
+        #     2. Se a diferença é negativa, tirar do antigo_model
+            else:
+                before_model.quantity += diff_quantity
+                before_model.save()
+
+        #         1. Se o antigo_model ficar menor que 0, então deleta-lo
+                if before_model.quantity == 0:
+                    before_model.delete()
+                
+                if before_model.quantity < 0:
+                    actual_model = models.ProductExpirationLog.objects.filter(
+                        product__id=instance.id,
+                        expiration=expiration
+                    ).first()
+
+                    actual_model += diff_quantity
+                    actual_model.save()
+                    
+                    before_model.delete()
+
+        #     2. Se diferentes, preciso analisar se a diferença é positva ou negativa
+        else:
+            #     1. Se a diferença é positiva, adicionar ao antigo_model
+            if diff_quantity >= 0:
+                before_model.quantity += diff_quantity
+                before_model.save()
+
+        #     2. Se a diferença negativa, tirar do antigo_model já existente
+            else:
+
+                before_model = models.ProductExpirationLog.objects.filter(
+                    product__id=instance.id
+                ).first()
+
+                before_model.quantity += diff_quantity
+                before_model.save()
+
+        #         1. Se o antigo_model ficar menor que 0, então deleta-lo
+                if before_model.quantity == 0:
+                    before_model.delete()
+
+                if before_model.quantity < 0:
+                    actual_model = models.ProductExpirationLog.objects.filter(
+                        product__id=instance.id,
+                        expiration=expiration
+                    ).first()
+
+                    actual_model += diff_quantity
+                    actual_model.save()
+
+                    before_model.delete()
+        return super().perform_update(serializer)
 
     def list(self, request, *args, **kwargs):
         self.queryset = self.queryset.filter(company=request.user.id)
@@ -70,6 +182,6 @@ class PurchaseViewSets(ModelViewSet):
         return super().perform_create(serializer)
 
 
-class LogProductViewSets(ModelViewSet):
+class ProductLogViewSets(ModelViewSet):
     queryset = querys.get_log_products()
-    serializer_class = serializers.LogProductSerializer
+    serializer_class = serializers.ProductLogSerializer

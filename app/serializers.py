@@ -16,7 +16,8 @@ class ProductSerializer(serializers.ModelSerializer):
         model = models.Product
         fields = [
             'id', 'name', 'description', 'brand',
-            'quantity', 'price'
+            'quantity', 'purchase_price', 'sale_price',
+            'expiration'
         ]
 
 
@@ -32,7 +33,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class LogProductSerializer(serializers.ModelSerializer):
+class ProductLogSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.LogProduct
+        model = models.ProductLog
         fields = '__all__'

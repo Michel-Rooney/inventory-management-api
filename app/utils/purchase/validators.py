@@ -4,14 +4,16 @@ from app import models
 
 
 def create_log_product(product):
-    log_product = models.LogProduct.objects.create(
+    log_product = models.ProductLog.objects.create(
         name=product.get('name', 'Sem nome'),
         description=product.get(
             'description', 'Esse produto não possui uma descrição'
         ),
         brand=product.get('brand', 'Sem marca'),
         quantity=product.get('quantity', 1),
-        price=product.get('price', 1),
+        purchase_price=product.get('purchase_price', 1),
+        sale_price=product.get('sale_price', 1),
+        expiration=product.get('expiration', 1),
     )
 
     return log_product
@@ -30,7 +32,10 @@ def product_is_different(product):
         if product.get('quantity') != log_product.quantity:
             return True
 
-        if product.get('price') != log_product.price:
+        if product.get('sale_price') != log_product.sale_price:
+            return True
+
+        if product.get('sale_price') != log_product.sale_price:
             return True
 
         return False
@@ -40,6 +45,22 @@ def product_is_different(product):
 
 def sub_product_quantity(product):
     product_model = querys.get_product(name=product.get('name'))
+
+    product_model.quantity -= product.get('quantity')
+    product_model.save()
+
+
+def sub_product_expiration_logs_quantity(product):
+    product_model = models.ProductExpirationLog.objects.filter(
+        product__name=product.get('name')
+    ).order_by(
+        'expiration'
+    )
+
+    if product_model[0].quantity <= 0:
+        product_model[0].delete()
+
+    product_model = product_model[0]
 
     product_model.quantity -= product.get('quantity')
     product_model.save()
@@ -55,12 +76,15 @@ def analyze_product_save(serializer, company, products):
                 description=product.get('description'),
                 brand=product.get('brand'),
                 quantity=product.get('quantity'),
-                price=product.get('price')
+                purchase_price=product.get('purchase_price'),
+                sale_price=product.get('sale_price'),
+                expiration=product.get('expiration'),
             )
 
         instance = serializer.save(company=company)
         instance.log_products.add(log_product)
         sub_product_quantity(product)
+        sub_product_expiration_logs_quantity(product)
 
 
 def analyze_product_model_existence(products):
@@ -101,9 +125,14 @@ def analyze_product_model_existence(products):
                 'O campo de marca difere do produto escolhido'
             ]
 
-        if product.get('price', '') != product_model.price:
-            erros_product['price'] = [
-                'O campo de preço difere do produto escolhido'
+        if product.get('purchase_price', '') != product_model.purchase_price:
+            erros_product['purchase_price'] = [
+                'O campo de preço de compra difere do produto escolhido'
+            ]
+
+        if product.get('sale_price', '') != product_model.sale_price:
+            erros_product['sale_price'] = [
+                'O campo de preço de venda difere do produto escolhido'
             ]
 
         if erros_product:

@@ -26,13 +26,13 @@ def get_purchase(**kwargs):
 
 
 def get_log_products(**kwargs):
-    log_products = models.LogProduct.objects.filter(**kwargs)
+    log_products = models.ProductLog.objects.filter(**kwargs)
 
     return log_products
 
 
 def get_log_product(**kwargs):
-    log_product = models.LogProduct.objects.filter(
+    log_product = models.ProductLog.objects.filter(
         **kwargs
     ).first()
 
