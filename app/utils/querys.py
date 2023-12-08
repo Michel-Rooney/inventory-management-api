@@ -57,3 +57,31 @@ def get_product(**kwargs):
     ).first()
 
     return product
+
+
+def get_product_expiration_log(**kwargs):
+    product = models.ProductExpirationLog.objects.filter(
+        **kwargs
+    ).select_related(
+        'product'
+    ).first()
+
+    return product
+
+
+def get_products_expiration_log(**kwargs):
+    product = models.ProductExpirationLog.objects.filter(
+        **kwargs
+    ).select_related(
+        'product'
+    )
+
+    return product
+
+
+def create_product_expiration_log(**kwargs):
+    product = models.ProductExpirationLog.objects.create(
+        **kwargs
+    )
+
+    return product
