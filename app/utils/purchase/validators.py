@@ -48,23 +48,7 @@ def sub_product_quantity(product):
 
     product_model.quantity -= product.get('quantity')
     product_model.save()
-
-
-def sub_product_expiration_logs_quantity(product):
-    product_model = models.ProductExpirationLog.objects.filter(
-        product__name=product.get('name')
-    ).order_by(
-        'expiration'
-    )
-
-    if product_model[0].quantity <= 0:
-        product_model[0].delete()
-
-    product_model = product_model[0]
-
-    product_model.quantity -= product.get('quantity')
-    product_model.save()
-
+      
 
 def analyze_product_save(serializer, company, products):
     for product in products:
@@ -84,7 +68,6 @@ def analyze_product_save(serializer, company, products):
         instance = serializer.save(company=company)
         instance.log_products.add(log_product)
         sub_product_quantity(product)
-        sub_product_expiration_logs_quantity(product)
 
 
 def analyze_product_model_existence(products):

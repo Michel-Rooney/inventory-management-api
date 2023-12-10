@@ -53,7 +53,13 @@ class ProductViewSets(ModelViewSet):
         return super().perform_create(serializer)
 
     def perform_update(self, serializer):
-        analyze_expiration(self, serializer)
+        instance = serializer.instance
+        quantity = self.request.data.get('quantity', '')
+        expiration = self.request.data.get(
+            'expiration', str(instance.expiration)
+        )
+
+        analyze_expiration(instance, quantity, expiration)
         return super().perform_update(serializer)
 
     def list(self, request, *args, **kwargs):
@@ -81,6 +87,17 @@ class PurchaseViewSets(ModelViewSet):
         company = self.request.user
         validators.analyze_product_save(serializer, company, products)
 
+        
+        for product in products:
+            instance = querys.get_product(
+                name=product.get('name')
+            )
+            quantity = instance.quantity - product.get('quantity', '')
+            expiration = product.get(
+                'expiration', instance.expiration
+            )
+            analyze_expiration(instance, quantity, expiration)
+        
         return super().perform_create(serializer)
 
 

@@ -1,14 +1,8 @@
 from app.utils import querys
 
 
-def analyze_expiration(self, serializer):
+def analyze_expiration(instance, quantity, expiration):
     # 1- Preciso pegar os dados da request
-    instance = serializer.instance
-    quantity = self.request.data.get('quantity', '')
-    expiration = self.request.data.get(
-        'expiration', str(instance.expiration)
-    )
-
     if quantity == '':
         return True
 
