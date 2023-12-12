@@ -1,6 +1,15 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
+
+def validate_future_date(value):
+    if value < timezone.now().date():
+        raise ValidationError(
+            "A data de validade deve ser posterior ao dia atual."
+        )
 
 
 class Product(models.Model):
@@ -15,7 +24,7 @@ class Product(models.Model):
     sale_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    expiration = models.DateField()
+    expiration = models.DateField(validators=[validate_future_date])
 
     def __str__(self) -> str:
         return (
@@ -27,7 +36,7 @@ class Product(models.Model):
 class ProductExpirationLog(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
-    expiration = models.DateField()
+    expiration = models.DateField(validators=[validate_future_date])
 
     def __str__(self) -> str:
         return (
@@ -45,7 +54,7 @@ class ProductLog(models.Model):
     sale_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    expiration = models.DateField()
+    expiration = models.DateField(validators=[validate_future_date])
 
     def __str__(self) -> str:
         return (
