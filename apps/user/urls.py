@@ -8,21 +8,21 @@ from rest_framework_simplejwt.views import (
 from . import views
 
 
-app_name = 'app'
+app_name = 'user'
 
 urlpatterns_jwt = [
     path(
-        'api/token/',
+        'token/',
         TokenObtainPairView.as_view(),
         name='token_obtain_pair'
     ),
     path(
-        'api/token/refresh/',
+        'token/refresh/',
         TokenRefreshView.as_view(),
         name='token_refresh'
     ),
     path(
-        'api/token/verify/',
+        'token/verify/',
         TokenVerifyView.as_view(),
         name='token_verify'
     ),
@@ -30,14 +30,7 @@ urlpatterns_jwt = [
 
 
 router = DefaultRouter()
-router.register('api/user', views.UserViewSets, basename='user-api')
-router.register('api/products', views.ProductViewSets, basename='product-api')
-router.register(
-    'api/purchase', views.PurchaseViewSets, basename='purchase-api'
-)
-router.register(
-    'api/product-log', views.ProductLogViewSets, basename='log-product-api'
-)
+router.register('user', views.UserViewSets, basename='user-api')
 
 urlpatterns = router.urls
 urlpatterns += urlpatterns_jwt

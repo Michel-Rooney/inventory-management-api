@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'app',
+    'apps.user',
+    'apps.product',
+    'apps.purchase',
 ]
 
 MIDDLEWARE = [

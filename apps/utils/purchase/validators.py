@@ -1,6 +1,6 @@
 from rest_framework.validators import ValidationError
 from .. import querys
-from app import models
+from apps.purchase import models
 
 
 def create_log_product(product):

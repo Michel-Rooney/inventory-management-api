@@ -1,6 +1,6 @@
 from django.utils import timezone
-from app import serializers
-from app.utils import querys
+from apps.product import serializers
+from apps.utils import querys
 
 
 QUANTITY_RED = 'quantity_red'

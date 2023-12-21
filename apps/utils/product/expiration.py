@@ -1,4 +1,4 @@
-from app.utils import querys
+from apps.utils import querys
 
 
 def analyze_expiration(instance, quantity, expiration):

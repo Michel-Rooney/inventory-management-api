@@ -1,8 +1,9 @@
-from app import models
+from apps.product.models import Product, ProductLog, ProductExpirationLog
+from apps.purchase.models import Purchase
 
 
 def get_purchases(**kwargs):
-    purchases = models.Purchase.objects.filter(
+    purchases = Purchase.objects.filter(
         **kwargs
     ).select_related(
         'company'
@@ -14,7 +15,7 @@ def get_purchases(**kwargs):
 
 
 def get_purchase(**kwargs):
-    purchase = models.Purchase.objects.filter(
+    purchase = Purchase.objects.filter(
         **kwargs
     ).select_related(
         'company'
@@ -26,13 +27,13 @@ def get_purchase(**kwargs):
 
 
 def get_log_products(**kwargs):
-    log_products = models.ProductLog.objects.filter(**kwargs)
+    log_products = ProductLog.objects.filter(**kwargs)
 
     return log_products
 
 
 def get_log_product(**kwargs):
-    log_product = models.ProductLog.objects.filter(
+    log_product = ProductLog.objects.filter(
         **kwargs
     ).first()
 
@@ -40,7 +41,7 @@ def get_log_product(**kwargs):
 
 
 def get_products(**kwargs):
-    products = models.Product.objects.filter(
+    products = Product.objects.filter(
         **kwargs
     ).select_related(
         'company'
@@ -50,7 +51,7 @@ def get_products(**kwargs):
 
 
 def get_product(**kwargs):
-    product = models.Product.objects.filter(
+    product = Product.objects.filter(
         **kwargs
     ).select_related(
         'company'
@@ -60,7 +61,7 @@ def get_product(**kwargs):
 
 
 def get_product_expiration_log(**kwargs):
-    product = models.ProductExpirationLog.objects.filter(
+    product = ProductExpirationLog.objects.filter(
         **kwargs
     ).select_related(
         'product'
@@ -70,7 +71,7 @@ def get_product_expiration_log(**kwargs):
 
 
 def get_products_expiration_log(**kwargs):
-    product = models.ProductExpirationLog.objects.filter(
+    product = ProductExpirationLog.objects.filter(
         **kwargs
     ).select_related(
         'product'
@@ -80,7 +81,7 @@ def get_products_expiration_log(**kwargs):
 
 
 def create_product_expiration_log(**kwargs):
-    product = models.ProductExpirationLog.objects.create(
+    product = ProductExpirationLog.objects.create(
         **kwargs
     )
 
