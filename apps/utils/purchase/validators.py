@@ -1,6 +1,7 @@
 from rest_framework.validators import ValidationError
-from .. import querys
+
 from apps.purchase import models
+from apps.utils import querys
 
 
 def create_log_product(product):
@@ -32,7 +33,7 @@ def product_is_different(product):
         if product.get('quantity') != log_product.quantity:
             return True
 
-        if product.get('sale_price') != log_product.sale_price:
+        if product.get('purchase_price') != log_product.purchase_price:
             return True
 
         if product.get('sale_price') != log_product.sale_price:
@@ -48,7 +49,7 @@ def sub_product_quantity(product):
 
     product_model.quantity -= product.get('quantity')
     product_model.save()
-      
+
 
 def analyze_product_save(serializer, company, products):
     for product in products:

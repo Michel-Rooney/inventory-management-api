@@ -1,8 +1,8 @@
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 
 
 def validate_future_date(value):
@@ -24,7 +24,12 @@ class Product(models.Model):
     sale_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    expiration = models.DateField(validators=[validate_future_date])
+    expiration = models.DateField(
+        validators=[validate_future_date], blank=True, null=True
+    )
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self) -> str:
         return (
@@ -54,11 +59,12 @@ class ProductLog(models.Model):
     sale_price = models.FloatField(validators=[MinValueValidator(0.00)])
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    expiration = models.DateField(validators=[validate_future_date])
+    expiration = models.DateField(
+        validators=[validate_future_date], blank=True, null=True
+    )
 
     def __str__(self) -> str:
         return (
             f'Log: {self.name} | {self.brand} | '
             f'Qtd: {self.quantity} | R$ {self.sale_price}'
         )
-

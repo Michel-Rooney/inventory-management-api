@@ -1,15 +1,15 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
-from apps.utils import querys
-
-from . import serializers, models
 from apps.permissions import IsOwnerProduct
-from apps.utils.product.product import get_products_alert
+from apps.utils import querys
 from apps.utils.product.expiration import analyze_expiration
+from apps.utils.product.product import get_products_alert
+
+from . import models, serializers
 from .pagination import ProductPagination
 
 
@@ -24,24 +24,38 @@ class ProductViewSets(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(company=self.request.user)
 
-        expiration_log = models.ProductExpirationLog.objects.create(
-            product=serializer.instance,
-            quantity=serializer.instance.quantity,
-            expiration=serializer.instance.expiration
-        )
+        if serializer.instance.expiration:
+            expiration_log = models.ProductExpirationLog.objects.create(
+                product=serializer.instance,
+                quantity=serializer.instance.quantity,
+                expiration=serializer.instance.expiration
+            )
 
-        expiration_log.save()
+            expiration_log.save()
 
         return super().perform_create(serializer)
 
     def perform_update(self, serializer):
         instance = serializer.instance
+        expiration = self.request.data.get('expiration')
         quantity = self.request.data.get('quantity', '')
-        expiration = self.request.data.get(
-            'expiration', str(instance.expiration)
-        )
 
-        analyze_expiration(instance, quantity, expiration)
+        if instance.expiration is None and expiration:
+            print('\n\nveio aqui\n\n')
+            if quantity == '':
+                return True
+
+            diff_quantity = quantity - instance.quantity
+            if diff_quantity > 0:
+                querys.create_product_expiration_log(
+                    product=instance,
+                    quantity=diff_quantity,
+                    expiration=expiration,
+                )
+
+        elif instance.expiration or expiration:
+            analyze_expiration(instance, quantity, expiration)
+
         return super().perform_update(serializer)
 
     def list(self, request, *args, **kwargs):

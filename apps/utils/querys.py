@@ -1,4 +1,4 @@
-from apps.product.models import Product, ProductLog, ProductExpirationLog
+from apps.product.models import Product, ProductExpirationLog, ProductLog
 from apps.purchase.models import Purchase
 
 

@@ -22,7 +22,9 @@ def analyze_expiration(instance, quantity, expiration):
         querys.create_product_expiration_log(
             product=instance,
             quantity=diff_quantity,
-            expiration=instance.expiration
+            expiration=(
+                instance.expiration if instance.expiration else expiration
+            )
         )
         return True
 
