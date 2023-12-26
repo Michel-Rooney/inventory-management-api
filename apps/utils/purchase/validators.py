@@ -88,37 +88,39 @@ def analyze_product_model_existence(products):
             })
 
         if product.get('quantity') > product_model.quantity:
-            raise ValidationError({
-                f'{product_name}': [
-                    'A quantidade exigida não possui estoque suficiente'
-                ]
-            })
+            erros_product['quantity'] = [
+               'A quantidade exigida não possui estoque suficiente.'
+            ]
 
         if product.get('name') != product_model.name:
             erros_product['name'] = [
-                'O campo nome difere do produto escolhido'
+                'O campo nome difere do produto escolhido.'
             ]
 
         if product.get('description', '') != product_model.description:
             erros_product['description'] = [
-                'O campo de descrição difere do produto escolhido'
+                'O campo de descrição difere do produto escolhido.'
             ]
 
         if product.get('brand', '') != product_model.brand:
             erros_product['brand'] = [
-                'O campo de marca difere do produto escolhido'
+                'O campo de marca difere do produto escolhido.'
             ]
 
         if product.get('purchase_price', '') != product_model.purchase_price:
             erros_product['purchase_price'] = [
-                'O campo de preço de compra difere do produto escolhido'
+                'O campo de preço de compra difere do produto escolhido.'
             ]
 
         if product.get('sale_price', '') != product_model.sale_price:
             erros_product['sale_price'] = [
-                'O campo de preço de venda difere do produto escolhido'
+                'O campo de preço de venda difere do produto escolhido.'
             ]
 
+        if product.get('expiration', '') != str(product_model.expiration):
+            erros_product['expiration'] = [
+                'O campo de validade difere do produto escolhido.'
+            ]
         if erros_product:
             errors[f'{product_name}'] = erros_product
 

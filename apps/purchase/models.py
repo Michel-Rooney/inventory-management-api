@@ -1,6 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.db import models
 
 from apps.product.models import ProductLog
 
@@ -16,4 +16,3 @@ class Purchase(models.Model):
 
     def __str__(self) -> str:
         return f'Purchase {self.create_at}'
-

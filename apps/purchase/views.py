@@ -12,7 +12,7 @@ class PurchaseViewSets(ModelViewSet):
     queryset = querys.get_purchases()
     serializer_class = serializers.PurchaseSerializer
     permission_classes = [IsAuthenticated, IsOwnerProduct]
-    http_method_names = ['get', 'post', 'PUT', 'PATCH', 'DELETE']
+    http_method_names = ['GET', 'post', 'PUT', 'PATCH', 'DELETE']
 
     def perform_create(self, serializer):
         products = self.request.data['products']

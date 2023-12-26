@@ -71,7 +71,6 @@ def expiration_validator(product, errors_product):
 
 
 def analyze_request_data(products):
-    print(products)
     errors = {}
 
     for i, product in enumerate(products, start=1):
