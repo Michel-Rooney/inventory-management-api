@@ -7,10 +7,9 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Purchase
-        fields = '__all__'
+        fields = ['total_price', 'products']
 
     def create(self, validated_data):
         validated_data.pop('products')
+
         return super().create(validated_data)
-
-

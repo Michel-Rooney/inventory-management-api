@@ -50,7 +50,7 @@ class PurchaseCreateDoesNotExistApiTest(BasePurchaseApiTest):
         response_message = response.data.get(NAME)[0]
 
         self.assertEqual(message, response_message)
-        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code) 
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
     @parameterized.expand([
         (

@@ -39,7 +39,7 @@ class Product(models.Model):
 
 
 class ProductExpirationLog(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
     expiration = models.DateField(validators=[validate_future_date])
 
