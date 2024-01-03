@@ -1,4 +1,10 @@
 {
     "python.analysis.typeCheckingMode": "off",
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+
+    "rest-client.environmentVariables": {
+        "local": {
+            "baseURL": "http://127.0.0.1:8000/api",
+        },
+    },
 }
