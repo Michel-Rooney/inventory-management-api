@@ -34,19 +34,19 @@ LOG_PRODUCTS {
 [X] TODO: Criar url de produtos que estão perto de acabar
 [X] TODO: Validar se os produtos que vem tem quantidade positiva
 
-TODO: Campo de data de validade dos produtos
+[X] TODO: Campo de data de validade dos produtos
 	- Criação
 	- Atualização
 	- Colocar na url de Alert
 	- Validar na criação da compra
 	- Diferenciar dos produtos que estão mais perto de vencer do que outros
   
-TODO: Produto com preço de entra e saida
+[X] TODO: Produto com preço de entra e saida
     - Preço de compra
     - Preço de venda
 
-TODO: Fazer as query para ProductExpirationLog
-TODO: Validar se a data não vem negativa (ontem)
+[X] TODO: Fazer as query para ProductExpirationLog
+[X] TODO: Validar se a data não vem negativa (ontem)
 
 
 
@@ -69,3 +69,12 @@ TODO: Validar se a data não vem negativa (ontem)
     2. Se diferentes, preciso analisar se a diferença é positva ou negativa
        1. Se a diferença é positiva, criar novo model
        2. Se a diferença negativa, tirar do antigo_model já existente
+
+
+
+
+
+TODO: Ajeitar a quantidade da compra
+- Se um produto tiver 2 de quantidade e a compra for feita 3 ela permite
+
+TODO: Fazer a somatoria do total de produtos vindos da compra

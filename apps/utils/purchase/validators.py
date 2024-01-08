@@ -87,9 +87,14 @@ def analyze_product_model_existence(products):
                 f'{product_name}': ['Esse produto não existe']
             })
 
-        if product.get('quantity') > product_model.quantity:
+        filter_product = filter(
+            lambda product: product['name'] == product_name, products
+        )
+        quantity_sum = sum(product['quantity'] for product in filter_product)
+
+        if quantity_sum > product_model.quantity:
             erros_product['quantity'] = [
-               'A quantidade exigida não possui estoque suficiente.'
+                'A quantidade exigida não possui estoque suficiente.'
             ]
 
         if product.get('name') != product_model.name:
