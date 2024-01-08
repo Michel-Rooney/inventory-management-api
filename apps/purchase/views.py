@@ -65,6 +65,8 @@ class PurchaseViewSets(ModelViewSet):
             data = dashboard_data.get_date_values(30, "%d/%b", "days")
 
         elif request_type == "year":
-            data = dashboard_data.get_date_values(11, "%B", "months")
+            data = dashboard_data.get_date_values(
+                11, "%B", "months", is_year=True
+            )
 
         return Response(data)
