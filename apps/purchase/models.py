@@ -9,7 +9,14 @@ class Purchase(models.Model):
     company = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True
     )
-    total_price = models.FloatField(validators=[MinValueValidator(0.00)])
+    total_price = models.FloatField(
+        validators=[MinValueValidator(0.00)],
+        default=0
+    )
+    total_purchase_price = models.FloatField(
+        validators=[MinValueValidator(0.00)],
+        default=0
+    )
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
     log_products = models.ManyToManyField(ProductLog, blank=True)

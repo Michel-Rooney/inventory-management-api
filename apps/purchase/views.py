@@ -36,7 +36,17 @@ class PurchaseViewSets(ModelViewSet):
         company = self.request.user
         validators.analyze_product_save(serializer, company, products)
 
+        total_price = 0
+        total_purchase_price = 0
+
         for product in products:
+            total_price += (
+                product.get('quantity') * product.get('sale_price')
+            )
+            total_purchase_price += (
+                product.get('quantity') * product.get('purchase_price')
+            )
+
             instance = querys.get_product(name=product.get("name"))
 
             log_product_exits = querys.get_products_expiration_log(
@@ -48,6 +58,10 @@ class PurchaseViewSets(ModelViewSet):
                 expiration = product.get("expiration", instance.expiration)
                 analyze_expiration(instance, quantity, expiration)
 
+        serializer.validated_data['total_price'] = total_price
+        serializer.validated_data[
+            'total_purchase_price'
+        ] = total_purchase_price
         return super().perform_create(serializer)
 
     @action(["get"], False)
