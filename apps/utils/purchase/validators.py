@@ -4,8 +4,9 @@ from apps.purchase import models
 from apps.utils import querys
 
 
-def create_log_product(product):
+def create_log_product(company, product):
     log_product = models.ProductLog.objects.create(
+        company=company,
         name=product.get('name', 'Sem nome'),
         description=product.get(
             'description', 'Esse produto não possui uma descrição'
@@ -54,7 +55,7 @@ def sub_product_quantity(product):
 def analyze_product_save(serializer, company, products):
     for product in products:
         if product_is_different(product):
-            log_product = create_log_product(product)
+            log_product = create_log_product(company, product)
         else:
             log_product = querys.get_log_product(
                 name=product.get('name'),

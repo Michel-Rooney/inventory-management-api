@@ -14,7 +14,7 @@ def validate_future_date(value):
 
 class Product(models.Model):
     company = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True
+        User, on_delete=models.CASCADE, null=True
     )
     name = models.CharField(max_length=64, unique=True)
     description = models.CharField(max_length=255)
@@ -51,6 +51,7 @@ class ProductExpirationLog(models.Model):
 
 
 class ProductLog(models.Model):
+    company = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=255)
     brand = models.CharField(max_length=64)

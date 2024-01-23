@@ -30,9 +30,10 @@ def get_gain(sale_price, purchase_price):
     return (sale_price - purchase_price)
 
 
-def get_models_range_date(minimal_date, max_date):
+def get_models_range_date(company, minimal_date, max_date):
     return querys.get_purchases(
-        create_at__range=[minimal_date, max_date]
+        company=company,
+        create_at__range=[minimal_date, max_date],
     )
 
 
@@ -40,7 +41,9 @@ def get_model_date(date):
     return querys.get_purchases(create_at__date=date)
 
 
-def get_date_values(time, format: str, timedelta_field: str, is_year=False):
+def get_date_values(
+    company, time, format: str, timedelta_field: str, is_year=False
+):
     date_now = timezone.now()
     dashboard_data = {}
     labels = []
@@ -86,7 +89,8 @@ def get_date_values(time, format: str, timedelta_field: str, is_year=False):
 
     minimal_date = get_last_day(**{timedelta_field: time})
     models = querys.get_purchases(
-        create_at__range=[minimal_date, date_now]
+        company=company,
+        create_at__range=[minimal_date, date_now],
     )
 
     total_price = get_total_price(models)
@@ -98,7 +102,8 @@ def get_date_values(time, format: str, timedelta_field: str, is_year=False):
     ).order_by('-biggest_price').first()
 
     products = querys.get_log_products(
-        create_at__range=[minimal_date, date_now]
+        company=company,
+        create_at__range=[minimal_date, date_now],
     )
     most_sold_product = products.values('name').annotate(
         total_quantity_sold=Sum('purchase__log_products__quantity')

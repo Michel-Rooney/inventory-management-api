@@ -72,15 +72,17 @@ class PurchaseViewSets(ModelViewSet):
         if request_type not in types:
             return Response({"detail": "Tipo de atributo da url inválido."})
 
+        company = request.user.id
+
         if request_type == "week":
-            data = dashboard_data.get_date_values(6, "%A", "days")
+            data = dashboard_data.get_date_values(company, 6, "%A", "days")
 
         elif request_type == "month":
-            data = dashboard_data.get_date_values(30, "%d/%b", "days")
+            data = dashboard_data.get_date_values(company, 30, "%d/%b", "days")
 
         elif request_type == "year":
             data = dashboard_data.get_date_values(
-                11, "%B", "months", is_year=True
+                company, 11, "%B", "months", is_year=True
             )
 
         return Response(data)
