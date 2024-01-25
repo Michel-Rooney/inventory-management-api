@@ -14,6 +14,8 @@ from datetime import timedelta
 from pathlib import Path
 
 from decouple import config
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,16 +90,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 ALLOWED_DATABASE = True if config('ALLOWED_DATABASE', '') == '1' else False
 
-if not DEBUG and ALLOWED_DATABASE:
+if ALLOWED_DATABASE:
     DATABASES = {
-        'default': {
-            'ENGINE': config('ENGINE_DB', ''),
-            'NAME': config('NAME_DB', ''),
-            'USER': config('USER_DB', ''),
-            'PASSWORD': config('PASSWORD_DB', ''),
-            'HOST': config('HOST_DB', ''),
-            'PORT': config('PORT_DB', ''),
-        }
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL', ''),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
 else:
     DATABASES = {
