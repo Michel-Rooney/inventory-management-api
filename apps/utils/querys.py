@@ -33,20 +33,12 @@ def get_log_products(**kwargs):
 
 
 def get_log_product(**kwargs):
-    log_product = ProductLog.objects.filter(
-        **kwargs
-    ).first()
-
+    log_product = ProductLog.objects.filter(**kwargs).first()
     return log_product
 
 
 def get_products(**kwargs):
-    products = Product.objects.filter(
-        **kwargs
-    ).select_related(
-        'company'
-    )
-
+    products = Product.objects.filter(**kwargs).select_related('company')
     return products
 
 
@@ -81,8 +73,5 @@ def get_products_expiration_log(**kwargs):
 
 
 def create_product_expiration_log(**kwargs):
-    product = ProductExpirationLog.objects.create(
-        **kwargs
-    )
-
+    product = ProductExpirationLog.objects.create(**kwargs)
     return product

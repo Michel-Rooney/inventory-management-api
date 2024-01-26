@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from . import serializers
-from apps.permissions import IsOwner
+from apps.utils.permissions import IsOwner
 
 
 def home(request):
@@ -22,7 +22,5 @@ class UserViewSets(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         obj = get_object_or_404(User, id=request.user.id)
-        serializers = self.get_serializer(
-            instance=obj
-        )
+        serializers = self.get_serializer(instance=obj)
         return Response(serializers.data)

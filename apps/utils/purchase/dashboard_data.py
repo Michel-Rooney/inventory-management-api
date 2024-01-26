@@ -1,9 +1,11 @@
 import calendar
-import locale
-
+# import locale
 from dateutil.relativedelta import relativedelta
+
 from django.db.models import Sum, Max
 from django.utils import timezone
+
+from rest_framework.response import Response
 
 from apps.utils import querys
 
@@ -50,7 +52,7 @@ def get_date_values(
     values = []
     data = []
 
-    locale.setlocale(locale.LC_TIME, 'pt_BR.utf-8')
+    # locale.setlocale(locale.LC_TIME, 'pt_BR.utf-8')
     for i in range(time, -1, -1):
         # Labels
         date = get_last_day(**{timedelta_field: i})
@@ -66,7 +68,7 @@ def get_date_values(
             last_day_month = calendar.monthrange(date.year, date.month)[1]
             max_date = timezone.datetime(date.year, date.month, last_day_month)
 
-            model = get_models_range_date(minimal_date, max_date)
+            model = get_models_range_date(company, minimal_date, max_date)
 
         if model is not None:
             value = get_total_price(model)
@@ -131,5 +133,28 @@ def get_date_values(
         "most_sold_product": most_sold_product,
     }
 
-    locale.setlocale(locale.LC_TIME, '')
+    # locale.setlocale(locale.LC_TIME, '')
     return dashboard_data
+
+
+def get_dashboard_data(request: any) -> dict:
+    types = ["week", "month", "year"]
+    request_type = request.query_params.get("type", "")
+
+    if request_type not in types:
+        return Response({"detail": "Tipo de atributo da url inválido."})
+
+    company = request.user.id
+
+    if request_type == "week":
+        data = get_date_values(company, 6, "%A", "days")
+
+    elif request_type == "month":
+        data = get_date_values(company, 30, "%d/%b", "days")
+
+    elif request_type == "year":
+        data = get_date_values(
+            company, 11, "%B", "months", is_year=True
+        )
+
+    return data

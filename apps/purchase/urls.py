@@ -4,8 +4,6 @@ from . import views
 app_name = 'purchase'
 
 router = DefaultRouter()
-router.register(
-    'purchase', views.PurchaseViewSets, basename='purchase-api'
-)
+router.register('purchase', views.PurchaseViewSets, basename='purchase-api')
 
 urlpatterns = router.urls
