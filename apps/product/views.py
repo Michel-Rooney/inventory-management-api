@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from apps.utils.permissions import IsOwnerProduct
 from apps.utils import querys
+from apps.utils.permissions import IsOwnerProduct
 from apps.utils.product import expiration as product_expiration
 from apps.utils.product.alert import get_products_alert
 
@@ -34,7 +34,7 @@ class ProductViewSets(ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     @action(['get'], False)
-    def alert_products(self, request, *args, **kwargs):
+    def alert_products(self, request):
         result_products = get_products_alert(request)
         return Response(result_products)
 
