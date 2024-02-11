@@ -3,4 +3,3 @@ from .models import Purchase
 
 
 admin.site.register(Purchase)
-

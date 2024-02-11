@@ -1,4 +1,5 @@
 from apps.utils import querys
+from apps.product import models
 
 
 def analyze_expiration(instance, quantity, expiration):
@@ -96,3 +97,37 @@ def analyze_expiration(instance, quantity, expiration):
 
                 else:
                     break
+
+
+def create_expiration(self, serializer):
+    serializer.save(company=self.request.user)
+
+    if serializer.instance.expiration:
+        expiration_log = models.ProductExpirationLog.objects.create(
+            product=serializer.instance,
+            quantity=serializer.instance.quantity,
+            expiration=serializer.instance.expiration
+        )
+
+        expiration_log.save()
+
+
+def update_expiration(self, serializer):
+    instance = serializer.instance
+    expiration = self.request.data.get('expiration')
+    quantity = self.request.data.get('quantity', '')
+
+    if instance.expiration is None and expiration:
+        if quantity == '':
+            return True
+
+        diff_quantity = quantity - instance.quantity
+        if diff_quantity > 0:
+            querys.create_product_expiration_log(
+                product=instance,
+                quantity=diff_quantity,
+                expiration=expiration,
+            )
+
+    elif instance.expiration or expiration:
+        analyze_expiration(instance, quantity, expiration)

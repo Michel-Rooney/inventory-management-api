@@ -1,9 +1,8 @@
 from rest_framework.routers import DefaultRouter
-
 from . import views
 
-app_name = 'product'
 
+app_name = 'product'
 
 router = DefaultRouter()
 router.register('products', views.ProductViewSets, basename='product-api')
