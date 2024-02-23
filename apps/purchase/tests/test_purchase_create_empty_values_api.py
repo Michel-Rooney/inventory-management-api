@@ -6,33 +6,46 @@ from .base_purchase import BasePurchaseApiTest
 
 
 class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
-    def test_purchase_api_post_empty_total_price(self):
+    def test_purchase_api_post_empty_purchase_price(self):
         url = reverse('purchase:purchase-api-list')
         token = self.get_jwt_token()
-        response = self.client.post(url, HTTP_AUTHORIZATION=token)
 
-        message = 'Este campo é obrigatório.'
-        response_message = response.data.get('total_price')[0]
+        data = {"products": [{}]}
+        data_json = json.dumps(data)
+
+        response = self.client.post(
+            url, HTTP_AUTHORIZATION=token, data=data_json,
+            content_type='application/json'
+        )
+
+        print(response.data)
+        message = 'O campo de preço de compra é obrigatório'
+        response_message = response.data.get(
+            'Product 1').get('purchase_price')[0]
 
         self.assertEqual(message, response_message)
 
-    def test_purchase_api_post_total_price_invalid(self):
-        data = {
-            "total_price": -1
-        }
-
+    def test_purchase_api_post_empty_sale_price(self):
         url = reverse('purchase:purchase-api-list')
         token = self.get_jwt_token()
-        response = self.client.post(url, HTTP_AUTHORIZATION=token, data=data)
 
-        message = 'Certifque-se de que este valor seja maior ou igual a 0.0.'
-        response_message = response.data.get('total_price')[0]
+        data = {"products": [{}]}
+        data_json = json.dumps(data)
+
+        response = self.client.post(
+            url, HTTP_AUTHORIZATION=token, data=data_json,
+            content_type='application/json'
+        )
+
+        print(response.data)
+        message = 'O campo de preço de venda é obrigatório'
+        response_message = response.data.get(
+            'Product 1').get('sale_price')[0]
 
         self.assertEqual(message, response_message)
 
     def test_purchase_api_post_empty_product_name(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 
@@ -53,7 +66,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_description(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 
@@ -74,7 +86,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_brand(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 
@@ -95,7 +106,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_quantity(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 
@@ -116,7 +126,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_quantity_invalid(self):
         data = {
-            "total_price": 20.3,
             "products": [{
                 'quantity': -1
             }]
@@ -139,7 +148,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_purchase_price(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 
@@ -162,7 +170,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_sale_price(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 
@@ -185,7 +192,6 @@ class PurchaseCreateEmptyValuesApiTest(BasePurchaseApiTest):
 
     def test_purchase_api_post_empty_product_expiration(self):
         data = {
-            "total_price": 20.3,
             "products": [{}]
         }
 

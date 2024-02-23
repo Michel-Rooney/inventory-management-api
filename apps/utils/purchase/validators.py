@@ -123,7 +123,7 @@ def analyze_product_model_existence(products):
                 'O campo de preço de venda difere do produto escolhido.'
             ]
 
-        if product.get('expiration', '') != str(product_model.expiration):
+        if str(product.get('expiration', '')) != str(product_model.expiration):
             erros_product['expiration'] = [
                 'O campo de validade difere do produto escolhido.'
             ]
